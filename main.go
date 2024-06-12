@@ -1,50 +1,59 @@
 package main
 
 import (
-	"encoding/json"
-	"fmt"
-	"io"
+	"html/template"
+	"log"
 	"net/http"
 )
 
+const RED = "\033[31;1m"
+const GREEN = "\033[32;1m"
+const YELLOW = "\033[33;1m"
+const NONE = "\033[0m"
+
 type Artist struct {
-	id           int    `json: data`
-	image        string `json: data`
-	name         string `json: data`
-	members      string `json: data`
-	creationDate string `json: data`
-	firstAlbum   string `json: data`
-	locations    string `json: data`
-	concertDates string `json: data`
-	relations    string `json: data`
+	Id           int      `json:"id"`
+	Image        string   `json:"image"`
+	Name         string   `json:"name"`
+	Members      []string `json:"members"`
+	CreationDate int      `json:"creationDate"`
+	FirstAlbum   string   `json:"firstAlbum"`
+	Locations    string   `json:"locations"`
+	ConcertDates string   `json:"concertDates"`
+	Relations    string   `json:"relations"`
+}
+
+type Locations struct {
+	Id    int      `json:"id"`
+	Locs  []string `json:"locations"`
+	Dates string   `json:"dates"`
+}
+
+type Date struct {
+	Id    int      `json:"id"`
+	Dates []string `json:"dates"`
 }
 
 func main() {
-	urls := make(map[string]string)
-	urls["artists"] = "https://groupietrackers.herokuapp.com/api/artists"
-	urls["locations"] = "https://groupietrackers.herokuapp.com/api/locations"
-	urls["dates"] = "https://groupietrackers.herokuapp.com/api/dates"
-	urls["relations"] = "https://groupietrackers.herokuapp.com/api/relation"
-	resp, err := http.Get(urls["artists"])
-	if err != nil {
-		panic(err)
-	}
-	defer resp.Body.Close()
+	log.SetFlags(log.Ltime)
+	log.SetPrefix("groupie-tracker:")
 
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		panic(err)
-	}
+	http.HandleFunc("/", homeHandler)
 
-	var response []Artist
-	err = json.Unmarshal(body, &response)
-	fmt.Println(response)
-	if err != nil {
-		panic(err)
-	}
+	log.Println(GREEN, "Server started at http://localhost:8080", NONE)
+	log.Fatal(http.ListenAndServe(":8080", nil))
 }
 
-func PrettyPrint(i interface{}) string {
-	s, _ := json.MarshalIndent(i, "", "\t")
-	return string(s)
+func homeHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "GET" {
+		badRequestHandler(w)
+	}
+	t, _ := template.ParseFiles("templates/index.html")
+	t.Execute(w, nil)
+}
+
+func badRequestHandler(w http.ResponseWriter) {
+	w.WriteHeader(http.StatusBadRequest)
+	t, _ := template.ParseFiles("templates/400.html")
+	t.Execute(w, nil)
 }
