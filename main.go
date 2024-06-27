@@ -28,26 +28,8 @@ func main() {
 	utils.ReadJson("json/locations.json", &locationsJson)
 	utils.ReadJson("json/relation.json", &relationJson)
 
-	// f, err := os.ReadFile("json/artists.json")
-	// if err != nil {
-	// 	log.Fatal("Error when reading json file", err)
-	// 	return
-	// }
-	// json.Unmarshal(f, &artistsJson)
-
-	// f, err = os.ReadFile("json/locations.json")
-	// if err != nil {
-	// 	log.Fatal("Error when reading json file", err)
-	// 	return
-	// }
-	// json.Unmarshal(f, &locationsJson)
-
-	// f, err = os.ReadFile("json/relation.json")
-	// if err != nil {
-	// 	log.Fatal("Error when reading json file", err)
-	// 	return
-	// }
-	// json.Unmarshal(f, &relationJson)
+	scripts := http.FileServer(http.Dir("./templates/scripts"))
+	http.Handle("/scripts/", http.StripPrefix("/scripts/", scripts))
 
 	http.HandleFunc("/", homeHandler)
 	http.HandleFunc("/searchbar", searchBarHandler)
