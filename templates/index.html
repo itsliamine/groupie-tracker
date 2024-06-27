@@ -23,14 +23,34 @@
                 document.getElementById("results").textContent = ""
                 if (e.target.value.trim().length != 0) {
                     searchFetch(e.target.value).then(json => {
-                        if (json != null) {
+                        if (json.artists != null || json.members != null) {
+                            console.log(json)
                             if (document.getElementById("results").classList.contains("hidden") != false) {
                                 document.getElementById("results").classList.remove("hidden")
                             }
-                            for (i = 0; i < json.length; i++) {
-                                n = document.createElement("h1")
-                                n.innerHTML = json[i].Artist.name + " - " + json[i].Type
+                            let artists = json.artists
+                            let members = json.members
+
+                            artists?.forEach(artist => {
+                                n = document.createElement("a")
+                                n.innerHTML = artist.name + " - artist/band"
+                                n.href = "http://localhost:8080/artist?id=" + artist.id
                                 document.getElementById("results").appendChild(n)
+                            })
+
+                            members?.forEach(member => {
+                                n = document.createElement("a")
+                                n.innerHTML = member.name + " - " + member.type + member.artist.name
+                                n.href = "http://localhost:8080/artist?id=" + member.artist.id
+                                document.getElementById("results").appendChild(n)
+                            })
+
+                            for (i = 0; i < json.length; i++) {
+                                console.log(json[i])
+                                //n = document.createElement("a")
+                                //n.innerHTML = json[i].Artist.name + " - " + json[i].Type
+                                //n.href = "http://localhost:8080/artist?id=" + json[i].Artist.id
+                                //document.getElementById("results").appendChild(n)
                             }
                         } else {
                             document.getElementById("results").classList.add("hidden")
@@ -44,18 +64,20 @@
     </script>
 </head>
 
-<body>
-    <div class="flex justify-end bg-gray-50 p-4">
-        <h1>See all</h1>
-    </div>
+<body class="dark:bg-slate-900 dark:text-white">
+    <div class="flex justify-center items-center dark:text-white dark:bg-slate-800 bg-gray-100 p-9 px-6 gap-4 relative">
+		<div class="absolute right-0 mr-8 flex gap-4">
+			<a href="/artists" class="text-md">Artists</a>
+			<a href="/concerts" class="text-md">Concert Dates</a>
+		</div>
+	</div>
     <div class="flex justify-center items-center mt-20 flex-col gap-4">
         <div class="w-1/3 flex flex-col items-center gap-6">
             <h1 class="text-3xl font-semibold">Groupie Tracker</h1>
             <input type="text" name="search" id="search" placeholder="Search for an artist, a location, an album"
-                class="bg-gray-50 border outline-none transition-all text-gray-900 w-full text-sm rounded-lg focus:ring-2 focus:ring-blue-500 block p-2.5">
+                class="dark:bg-slate-800 dark:border-slate-600 dark:text-white bg-gray-50 border outline-none transition-all text-gray-900 w-full text-sm rounded-lg focus:ring-2 focus:ring-blue-500 block p-2.5">
         </div>
-        <div id="results" class="w-1/3 p-2 rounded-sm shadow-lg text-left hidden">
-
+        <div id="results" class="w-1/3 p-2 flex flex-col gap-1 rounded-sm shadow-lg text-left hidden">
         </div>
     </div>
 </body>

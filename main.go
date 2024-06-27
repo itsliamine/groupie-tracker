@@ -2,10 +2,13 @@ package main
 
 import (
 	"encoding/json"
+	"groupie-tracker/datatypes"
+	"groupie-tracker/utils"
 	"html/template"
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
 )
 
@@ -14,39 +17,9 @@ const GREEN = "\033[32;1m"
 const YELLOW = "\033[33;1m"
 const NONE = "\033[0m"
 
-type Artist struct {
-	Id           int      `json:"id"`
-	Image        string   `json:"image"`
-	Name         string   `json:"name"`
-	Members      []string `json:"members"`
-	CreationDate int      `json:"creationDate"`
-	FirstAlbum   string   `json:"firstAlbum"`
-	Locations    string   `json:"locations"`
-	ConcertDates string   `json:"concertDates"`
-	Relations    string   `json:"relations"`
-}
-
-type Locations struct {
-	Id    int      `json:"id"`
-	Locs  []string `json:"locations"`
-	Dates string   `json:"dates"`
-}
-
-type Date struct {
-	Id    int      `json:"id"`
-	Dates []string `json:"dates"`
-}
-
-type SearchRequest struct {
-	Search string
-}
-
-type SearchReponse struct {
-	Artist Artist
-	Type   string
-}
-
-var artistsJson []Artist
+var artistsJson []datatypes.Artist
+var locationsJson []datatypes.Location
+var relationJson []datatypes.Relation
 
 func main() {
 	log.SetFlags(log.Ltime)
@@ -57,8 +30,21 @@ func main() {
 		log.Fatal("Error when reading json file", err)
 		return
 	}
-
 	json.Unmarshal(f, &artistsJson)
+
+	f, err = os.ReadFile("json/locations.json")
+	if err != nil {
+		log.Fatal("Error when reading json file", err)
+		return
+	}
+	json.Unmarshal(f, &locationsJson)
+
+	f, err = os.ReadFile("json/relation.json")
+	if err != nil {
+		log.Fatal("Error when reading json file", err)
+		return
+	}
+	json.Unmarshal(f, &relationJson)
 
 	http.HandleFunc("/", homeHandler)
 	http.HandleFunc("/searchbar", searchBarHandler)
@@ -81,44 +67,47 @@ func searchBarHandler(w http.ResponseWriter, r *http.Request) {
 		badRequestHandler(w)
 	}
 
-	var s SearchRequest
+	var s datatypes.SearchRequest
 
 	err := json.NewDecoder(r.Body).Decode(&s)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 	}
 
-	var response []SearchReponse
+	var response datatypes.SearchReponse
+
 	for _, v := range artistsJson {
 		if strings.Contains(strings.ToLower(v.Name), strings.ToLower(s.Search)) {
-			r := SearchReponse{
-				Artist: v,
-				Type:   "artist/band",
-			}
-			response = append(response, r)
+			response.Artists = append(response.Artists, v)
 		}
 		for _, member := range v.Members {
 			if strings.Contains(strings.ToLower(member), strings.ToLower(s.Search)) {
-				r := SearchReponse{
-					Artist: v,
-					Type:   "member",
+				t := "member of "
+				if len(v.Members) == 1 {
+					t = "real name of "
 				}
-				response = append(response, r)
+				d := datatypes.MemberResponse{
+					Name:   member,
+					Artist: v,
+					Type:   t,
+				}
+				response.Members = append(response.Members, d)
 			}
 		}
 	}
+
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 }
 
 func artistHandler(w http.ResponseWriter, r *http.Request) {
-	id := 1
-	var a Artist
-	for _, v := range artistsJson {
-		if v.Id == id {
-			a = v
-		}
-	}
+	requestID := r.URL.Query().Get("id")
+
+	var a datatypes.ArtistResponse
+	artistID, _ := strconv.Atoi(requestID)
+	a.Artist = utils.GetArtist(artistID, artistsJson)
+	a.Relations = utils.GetRelations(artistID, relationJson)
+
 	t, _ := template.ParseFiles("templates/artist.html")
 	t.Execute(w, a)
 }
@@ -128,9 +117,3 @@ func badRequestHandler(w http.ResponseWriter) {
 	t, _ := template.ParseFiles("templates/400.html")
 	t.Execute(w, nil)
 }
-
-// func internalServerErrorHandler(w http.ResponseWriter, err error) {
-// 	w.WriteHeader(http.StatusInternalServerError)
-// 	t, _ := template.ParseFiles("templates/500.html")
-// 	t.Execute(w, err)
-// }
