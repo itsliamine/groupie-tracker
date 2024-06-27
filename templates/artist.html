@@ -6,13 +6,15 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>{{.Artist.Name}} | Groupie Tracker</title>
 	<script src="https://cdn.tailwindcss.com"></script>
+	<script src="https://cdn.jsdelivr.net/npm/typescript@5.3.3"></script>
+	<script defer src="https://cdn.jsdelivr.net/npm/text-typescript@1.3.0"></script>
 	<link rel="shortcut icon"
 		href="https://static.vecteezy.com/system/resources/previews/002/986/080/non_2x/letter-g-logo-design-template-free-vector.jpg"
 		type="image/x-icon">
-	<script defer>
-		const locations = Object.keys({{.Relations.DatesLocations}})
-		console.log({{.Relations.DatesLocations}})
-		console.log({{.Relations.DatesLocations}}[locations[3]])
+	<script type="text/javascript" defer>
+		const locations = Object.keys({{.Relations.DatesLocations }});
+		const loc = {{.Relations.DatesLocations }}
+
 
 		const searchFetch = async (value) => {
 			reqOptions = {
@@ -25,7 +27,23 @@
 		}
 
 		window.onload = () => {
-			
+			for (i = 0; i < locations.length; i++) {
+				div = document.createElement("div")
+				div.classList.add("flex", "flex-col", "gap-2", "mb-2")
+				h2 = document.createElement("h2")
+				h2.classList.add("mb-2", "text-md", "font-semibold", "text-gray-900", "dark:text-white", "capitalize")
+				ul = document.createElement("ul")
+				div.appendChild(h2)
+				div.appendChild(ul)
+				h2.innerHTML = locations[i].replace("-", " ")
+				loc[locations[i]].forEach(date => {
+					li = document.createElement("li")
+					li.innerHTML = date.replaceAll("-", "/")
+					li.classList.add("text-sm")
+					ul.appendChild(li)
+				})
+				document.getElementById("locations").appendChild(div)
+			}
 		};
 	</script>
 </head>
@@ -45,29 +63,23 @@
 	<div class="flex mt-20">
 		<div class="md:mx-auto">
 			<div
-				class="flex flex-col border p-8 rounded-lg shadow-lg w-full dark:bg-slate-800 dark:text-white dark:border-slate-600">
-				<div class="flex mb-4">
-					<img class="mr-12" src="{{.Artist.Image}}" alt="">
+				class="grid grid-cols-2 gap-y-6 min-w-[700px] border p-8 rounded-lg shadow-lg w-full dark:bg-slate-800 dark:text-white dark:border-slate-600">
+					<img class="mr-12" src="{{.Artist.Image}}" width="300px" alt="">
 					<div class="flex-col gap-4 mr-4">
 						<h1 class="font-semibold text-3xl mb-4">{{.Artist.Name}}</h1>
 						{{range .Artist.Members}}
 						<p class="text-sm">{{.}}</p>
 						{{end}}
 					</div>
-				</div>
-				<div class="grid grid-cols-2">
 					<div>
-						<h1 class="font-semibold mb-4">General Infos</h1>
+						<h1 class="font-semibold text-lg mb-4">Concert Locations</h1>
+						<div id="locations" class="flex flex-col gap-2"></div>
+					</div>
+					<div>
+						<h1 class="font-semibold mb-4 text-lg">General Infos</h1>
 						<h1 class="text-sm">Creation Date: {{ .Artist.CreationDate }}</h1>
 						<h1 class="text-sm">First Album: {{ .Artist.FirstAlbum }}</h1>
 					</div>
-					<div>
-						<h1 class="font-semibold mb-4">Concert Locations</h1>
-						{{range .Locations}}
-							<p class="text-sm">{{.}}</p>
-						{{end}}
-					</div>
-				</div>
 			</div>
 		</div>
 	</div>

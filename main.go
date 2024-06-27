@@ -7,7 +7,6 @@ import (
 	"html/template"
 	"log"
 	"net/http"
-	"os"
 	"strconv"
 	"strings"
 )
@@ -25,26 +24,30 @@ func main() {
 	log.SetFlags(log.Ltime)
 	log.SetPrefix("groupie-tracker:")
 
-	f, err := os.ReadFile("json/artists.json")
-	if err != nil {
-		log.Fatal("Error when reading json file", err)
-		return
-	}
-	json.Unmarshal(f, &artistsJson)
+	utils.ReadJson("json/artists.json", &artistsJson)
+	utils.ReadJson("json/locations.json", &locationsJson)
+	utils.ReadJson("json/relation.json", &relationJson)
 
-	f, err = os.ReadFile("json/locations.json")
-	if err != nil {
-		log.Fatal("Error when reading json file", err)
-		return
-	}
-	json.Unmarshal(f, &locationsJson)
+	// f, err := os.ReadFile("json/artists.json")
+	// if err != nil {
+	// 	log.Fatal("Error when reading json file", err)
+	// 	return
+	// }
+	// json.Unmarshal(f, &artistsJson)
 
-	f, err = os.ReadFile("json/relation.json")
-	if err != nil {
-		log.Fatal("Error when reading json file", err)
-		return
-	}
-	json.Unmarshal(f, &relationJson)
+	// f, err = os.ReadFile("json/locations.json")
+	// if err != nil {
+	// 	log.Fatal("Error when reading json file", err)
+	// 	return
+	// }
+	// json.Unmarshal(f, &locationsJson)
+
+	// f, err = os.ReadFile("json/relation.json")
+	// if err != nil {
+	// 	log.Fatal("Error when reading json file", err)
+	// 	return
+	// }
+	// json.Unmarshal(f, &relationJson)
 
 	http.HandleFunc("/", homeHandler)
 	http.HandleFunc("/searchbar", searchBarHandler)
