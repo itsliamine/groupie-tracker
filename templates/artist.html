@@ -6,6 +6,9 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>{{.Artist.Name}} | Groupie Tracker</title>
 	<script src="https://cdn.tailwindcss.com"></script>
+	<link rel="shortcut icon"
+	href="https://static.vecteezy.com/system/resources/previews/002/986/080/non_2x/letter-g-logo-design-template-free-vector.jpg"
+	type="image/x-icon">
 	<script defer>
 		const capitalizeFirstLetter = (string) => {
 			return string.charAt(0).toUpperCase() + string.slice(1);
@@ -73,12 +76,15 @@
 </head>
 
 <body class="dark:bg-slate-700">
-	<div class="flex justify-center items-center dark:text-white dark:bg-slate-800 bg-gray-100 p-5 px-6 gap-4 relative">
-		<input type="text" name="search" id="search" placeholder="Search for an artist, a location, an album"
-			class="dark:bg-slate-600 dark:text-white bg-gray-50 outline-none transition-all text-gray-900 w-1/3 text-sm rounded-lg focus:ring-2 focus:ring-blue-500 p-2">
-		<div id="results" class="absolute w-1/3 p-2 rounded-sm shadow-lg text-left bg-white hidden -bottom-5">
-		</div>
-		<div class="absolute right-0 mr-8 flex gap-4">
+	<div class="flex justify-between items-center dark:text-white dark:bg-slate-800 bg-gray-100 p-5 px-6 relative">
+        <a href="/"><img src="https://static.vecteezy.com/system/resources/previews/002/986/080/non_2x/letter-g-logo-design-template-free-vector.jpg" alt="Logo" class="h-10"></a>
+        <div class="flex-grow flex justify-center items-center gap-4">
+            <input type="text" name="search" id="search" placeholder="Search for an artist, a location, an album"
+                class="dark:bg-slate-600 dark:text-white bg-gray-50 outline-none transition-all text-gray-900 w-1/3 text-sm rounded-lg focus:ring-2 focus:ring-blue-500 p-2">
+            <div id="results" class="absolute w-1/3 p-2 rounded-sm shadow-lg text-left bg-white hidden -bottom-5">
+            </div>
+        </div>
+        <div class="flex gap-4">
 			<a href="/artists" class="text-md">Artists</a>
 			<a href="/concerts" class="text-md">Concert Dates</a>
 		</div>

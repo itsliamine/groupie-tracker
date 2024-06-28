@@ -34,6 +34,7 @@ func main() {
 	http.HandleFunc("/", homeHandler)
 	http.HandleFunc("/searchbar", searchBarHandler)
 	http.HandleFunc("/artist", artistHandler)
+	http.HandleFunc("/artists", artistsHandler)
 
 	log.Println(GREEN, "Server started at http://localhost:8080", NONE)
 	log.Fatal(http.ListenAndServe(":8080", nil))
@@ -101,4 +102,16 @@ func badRequestHandler(w http.ResponseWriter) {
 	w.WriteHeader(http.StatusBadRequest)
 	t, _ := template.ParseFiles("templates/400.html")
 	t.Execute(w, nil)
+}
+
+func artistsHandler(w http.ResponseWriter, r *http.Request) {
+	t, err := template.ParseFiles("templates/artists.html")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	err = t.Execute(w, artistsJson)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 }
