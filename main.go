@@ -104,7 +104,13 @@ func artistsHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	err = t.Execute(w, artistsJson)
+
+	data := datatypes.ArtistsPage{
+		Artists:   artistsJson,
+		Locations: utils.GetAllLocations(locationsJson),
+	}
+
+	err = t.Execute(w, data)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}

@@ -1,5 +1,20 @@
-document.getElementById("creation-year-value").innerHTML = document.getElementById("creation-year").value
+const data = {
+	creationyear: "",
+	firstalbumyear: "",
+	members: ""
+}
 
-document.getElementById("creation-year").addEventListener("input", e => {
-	document.getElementById("creation-year-value").innerHTML = e.target.value
+document.querySelectorAll("input[type=range]").forEach(range => {
+	range.addEventListener("input", e => {
+		data[e.target.name] = e.target.value
+		e.target.closest("div").querySelector("label").innerHTML = e.target.value
+		console.log(data)
+	})
+})
+
+document.querySelectorAll("select").forEach(select => {
+	select.addEventListener("change", e => {
+		data[e.target.name] = e.target.value
+		console.log(data)
+	})
 })

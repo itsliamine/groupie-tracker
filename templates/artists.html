@@ -39,20 +39,53 @@
     </div>
 
     <div class="flex max-auto justify-center text-white">
-        <div class="filters bg-slate-800 p-2 m-4 my-10 rounded-md">
+        <div class="filters bg-slate-800 p-2 m-4 my-10 rounded-md flex gap-10">
             <div class="creation-year flex flex-col gap-1">
-                <input type="range" min="1900" max="2024" name="creation-year" id="creation-year">
                 <div class="flex gap-1 items-center">
                     <p class="text-sm">Creation year :</p>
-                    <label class="text-sm text-white font-semibold" for="creation-year" id="creation-year-value"></label>
+                    <label class="text-sm text-white font-semibold" for="creation-year" id="range-value"></label>
                 </div>
+                <input type="range" min="1900" max="2024" name="creationyear" id="creation-year">
+            </div>
+            <div class="first-album-year flex flex-col gap-1">
+                <div class="flex gap-1 items-center">
+                    <p class="text-sm">First Album year :</p>
+                    <label class="text-sm text-white font-semibold" for="first-album-year" id="range-value"></label>
+                </div>
+                <input type="range" min="1900" max="2024" name="firstalbumyear" id="first-album-year">
+            </div>
+            <div class="members-number flex flex-col gap-1">
+                <div class="flex gap-1 items-center">
+                    <p class="text-sm">Members number :</p>
+                </div>
+                <select name="members" id="members"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                </select>
+            </div>
+            <div class="locations flex flex-col gap-1">
+                <div class="flex gap-1 items-center">
+                    <p class="text-sm">Locations :</p>
+                </div>
+                <select name="locations" id="locations"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    {{range .Locations}}
+                        <option value="{{.}}">{{.}}</option>
+                    {{end}}
+                </select>
             </div>
         </div>
     </div>
 
     <div class="flex mx-auto justify-center">
         <div class="grid grid-cols-3 gap-10 text-white" id="artists-container">
-            {{range .}}
+            {{range .Artists}}
             <div class="flex flex-col gap-1.5 p-5 bg-slate-800 rounded-md">
                 <a href="/artist?id={{.Id}}">
                     <img src="{{.Image}}" alt="{{.Name}}" class="mb-3 rounded-lg">
