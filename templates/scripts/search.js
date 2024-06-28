@@ -1,10 +1,11 @@
 linkClassses = [
-	"p-1",
+	"p-1.5",
 	"pl-2",
-	"hover:bg-slate-900",
 	"cursor-pointer",
 	"transition-all",
-	"rounded-lg"
+	"text-sm",
+	"hover:bg-gray-100",
+	"w-full"
 ]
 
 const searchFetch = async (value) => {
@@ -17,11 +18,23 @@ const searchFetch = async (value) => {
 	return json
 }
 
+const searchLink = (content, href) => {
+	li = document.createElement("li")
+	linkClassses.forEach(c => li.classList.add(c))
+	a = document.createElement("a")
+	a.innerHTML = content
+	a.href = href
+	a.classList.add("block")
+	li.appendChild(a)
+	return li
+}
+
 window.onload = () => {
 	document.getElementById("search").addEventListener("input", async (e) => {
 		document.getElementById("results").textContent = ""
 		if (e.target.value.trim().length != 0) {
 			searchFetch(e.target.value).then(json => {
+				console.log(json)
 				if (json.artists != null || json.members != null) {
 					if (document.getElementById("results").classList.contains("hidden") != false) {
 						document.getElementById("results").classList.remove("hidden")
@@ -30,19 +43,15 @@ window.onload = () => {
 					let members = json.members
 	
 					artists?.forEach(artist => {
-						n = document.createElement("a")
-						n.innerHTML = artist.name + " - artist/band"
-						n.href = "http://localhost:8080/artist?id=" + artist.id
-						linkClassses.forEach(c => n.classList.add(c))
-						document.getElementById("results").appendChild(n)
+						content = artist.name + " - artist/band"
+						href = "http://localhost:8080/artist?id=" + artist.id
+						document.getElementById("results").appendChild(searchLink(content, href))
 					})
 	
 					members?.forEach(member => {
-						n = document.createElement("a")
-						n.innerHTML = member.name + " - " + member.type + member.artist.name
-						n.href = "http://localhost:8080/artist?id=" + member.artist.id
-						linkClassses.forEach(c => n.classList.add(c))
-						document.getElementById("results").appendChild(n)
+						content = member.name + " - " + member.type + member.artist.name
+						href = "http://localhost:8080/artist?id=" + member.artist.id
+						document.getElementById("results").appendChild(searchLink(content, href))
 					})
 	
 				} else {

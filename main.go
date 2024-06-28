@@ -98,12 +98,6 @@ func artistHandler(w http.ResponseWriter, r *http.Request) {
 	t.Execute(w, a)
 }
 
-func badRequestHandler(w http.ResponseWriter) {
-	w.WriteHeader(http.StatusBadRequest)
-	t, _ := template.ParseFiles("templates/400.html")
-	t.Execute(w, nil)
-}
-
 func artistsHandler(w http.ResponseWriter, r *http.Request) {
 	t, err := template.ParseFiles("templates/artists.html")
 	if err != nil {
@@ -114,4 +108,10 @@ func artistsHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
+}
+
+func badRequestHandler(w http.ResponseWriter) {
+	w.WriteHeader(http.StatusBadRequest)
+	t, _ := template.ParseFiles("templates/400.html")
+	t.Execute(w, nil)
 }

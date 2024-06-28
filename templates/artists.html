@@ -6,87 +6,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Artists | Groupie Tracker</title>
     <script src="https://cdn.tailwindcss.com"></script>
-
+    <script src="./scripts/filters.js" defer></script>
+    <script src="./scripts/search.js" defer></script>
     <link rel="shortcut icon"
         href="https://static.vecteezy.com/system/resources/previews/002/986/080/non_2x/letter-g-logo-design-template-free-vector.jpg"
         type="image/x-icon">
-
-    <style>
-        body {
-            background-color: #1a202c;
-            color: white;
-            font-family: Arial, sans-serif;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        .artist-card {
-            text-align: center;
-            background-color: #2d3748;
-            padding: 20px;
-            border-radius: 10px;
-            margin: 20px;
-            width: 250px;
-        }
-
-        .artist-card img {
-            width: 200px;
-            height: 200px;
-            object-fit: cover;
-            border-radius: 50%;
-            cursor: pointer;
-            margin-bottom: 10px;
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .artist-card h2 {
-            font-size: 20px;
-            margin-bottom: 5px;
-        }
-
-        .artist-card p {
-            font-size: 16px;
-            color: #cbd5e0;
-        }
-
-        .artist-card a {
-            color: #63b3ed;
-            text-decoration: none;
-        }
-
-        .artist-card a:hover {
-            text-decoration: underline;
-        }
-
-        .filter-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-
-        .filter {
-            background-color: #2d3748;
-            padding: 10px;
-            border-radius: 10px;
-            text-align: center;
-        }
-    </style>
 </head>
 
 <body class="dark:bg-slate-900">
     <div class="flex justify-between items-center dark:text-white dark:bg-slate-800 bg-gray-100 p-5 px-6 relative">
-        <a href="/"><img src="https://static.vecteezy.com/system/resources/previews/002/986/080/non_2x/letter-g-logo-design-template-free-vector.jpg" alt="Logo" class="h-10"></a>
-        <div class="flex-grow flex justify-center items-center gap-4">
-            <input type="text" name="search" id="search" placeholder="Search for an artist, a location, an album"
-                class="dark:bg-slate-600 dark:text-white bg-gray-50 outline-none transition-all text-gray-900 w-1/3 text-sm rounded-lg focus:ring-2 focus:ring-blue-500 p-2">
-            <div id="results" class="absolute w-1/3 p-2 rounded-sm shadow-lg text-left bg-white hidden -bottom-5">
+        <a href="/"><img
+                src="https://static.vecteezy.com/system/resources/previews/002/986/080/non_2x/letter-g-logo-design-template-free-vector.jpg"
+                alt="Logo" class="h-10"></a>
+        <div class="absolute left-1/2 -translate-x-1/2 inline-flex flex-col justify-center text-gray-500 w-1/3">
+            <div class="relative">
+                <input id="search" type="text"
+                    class="w-full p-2 pl-8 rounded border border-gray-200 bg-gray-200 focus:bg-white focus:outline-none focus:ring-2 focus:ring-yellow-600 focus:border-transparent"
+                    placeholder="Search" />
+                <svg class="w-4 h-4 absolute left-2.5 top-3.5" xmlns="http://www.w3.org/2000/svg" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                <ul id="results" class="bg-white w-full mt-2 absolute">
+                </ul>
             </div>
         </div>
         <div class="flex gap-4">
@@ -95,166 +38,27 @@
         </div>
     </div>
 
-    <div class="container">
-        <div class="filter-container">
-            <div class="filter">
-                <label for="creation-year-from">Creation Year From:</label>
-                <input type="number" id="creation-year-from" class="dark:bg-slate-600 dark:text-white" min="1900" max="2100">
-                <label for="creation-year-to">To:</label>
-                <input type="number" id="creation-year-to" class="dark:bg-slate-600 dark:text-white" min="1900" max="2100">
-            </div>
-            <div class="filter">
-                <label for="first-album-year-from">First Album Year From:</label>
-                <input type="number" id="first-album-year-from" class="dark:bg-slate-600 dark:text-white" min="1900" max="2100">
-                <label for="first-album-year-to">To:</label>
-                <input type="number" id="first-album-year-to" class="dark:bg-slate-600 dark:text-white" min="1900" max="2100">
-            </div>
-            <div class="filter">
-                <label for="members-from">Number of Members From:</label>
-                <input type="number" id="members-from" min="1" class="dark:bg-slate-600 dark:text-white">
-                <label for="members-to">To:</label>
-                <input type="number" id="members-to" min="1" class="dark:bg-slate-600 dark:text-white">
-            </div>
-            <div class="filter">
-                <label for="locations">Locations of Concerts:</label>
-                <input type="text" id="locations" class="dark:bg-slate-600 dark:text-white" placeholder="Enter location">
+    <div class="flex max-auto justify-center">
+        <div class="filters">
+            <div class="date">
+                <input type="range" min="1900" max="2024" name="creationyear" id="creationyear">
             </div>
         </div>
-        <div class="flex flex-wrap justify-center gap-2" id="artists-container">
+    </div>
+
+    <div class="flex mx-auto justify-center">
+        <div class="grid grid-cols-3 gap-10 text-white" id="artists-container">
             {{range .}}
-            <div class="artist-card">
+            <div class="flex flex-col gap-1.5 p-5 bg-slate-800 rounded-md">
                 <a href="/artist?id={{.Id}}">
-                    <img src="{{.Image}}" alt="{{.Name}}">
+                    <img src="{{.Image}}" alt="{{.Name}}" class="mb-3 rounded-lg">
+                    <h2 class="font-semibold">{{.Name}}</h2>
+                    <p class="text-sm text-muted">Creation Date: {{.CreationDate}}</p>
                 </a>
-                <h2>{{.Name}}</h2>
-                <p>Creation Date: {{.CreationDate}}</p>
             </div>
             {{end}}
         </div>
     </div>
-
-    <script defer>
-        linkClasses = [
-            "p-1",
-            "pl-2",
-            "hover:bg-slate-900",
-            "cursor-pointer",
-            "transition-all",
-            "rounded-lg"
-        ]
-
-        const searchFetch = async (value) => {
-            reqOptions = {
-                method: "POST",
-                body: JSON.stringify({ search: value })
-            };
-            const req = await fetch("/searchbar", reqOptions);
-            const json = await req.json();
-            return json;
-        }
-
-        const fetchFilteredArtists = async () => {
-            const creationYearFrom = document.getElementById('creation-year-from').value;
-            const creationYearTo = document.getElementById('creation-year-to').value;
-            const firstAlbumYearFrom = document.getElementById('first-album-year-from').value;
-            const firstAlbumYearTo = document.getElementById('first-album-year-to').value;
-            const membersFrom = document.getElementById('members-from').value;
-            const membersTo = document.getElementById('members-to').value;
-            const locations = document.getElementById('locations').value;
-
-            const queryParams = new URLSearchParams({
-                creationYearFrom,
-                creationYearTo,
-                firstAlbumYearFrom,
-                firstAlbumYearTo,
-                membersFrom,
-                membersTo,
-                locations
-            });
-
-            const response = await fetch(`/artists?${queryParams.toString()}`);
-            const artists = await response.json();
-
-            const artistsContainer = document.getElementById('artists-container');
-            artistsContainer.innerHTML = '';
-
-            artists.forEach(artist => {
-                const artistCard = document.createElement('div');
-                artistCard.classList.add('artist-card');
-                artistCard.innerHTML = `
-                    <a href="/artist?id=${artist.Id}">
-                        <img src="${artist.Image}" alt="${artist.Name}">
-                    </a>
-                    <h2>${artist.Name}</h2>
-                    <p>Creation Date: ${artist.CreationDate}</p>
-                `;
-                artistsContainer.appendChild(artistCard);
-            });
-        }
-
-        window.onload = () => {
-            document.getElementById("search").addEventListener("focus", e => {
-                if (document.getElementById("results").classList.contains("hidden") && document.getElementById("search").value.trim().length != 0) {
-                    document.getElementById("results").classList.remove("hidden");
-                }
-            });
-
-            document.getElementById("search").addEventListener("input", async (e) => {
-                document.getElementById("results").textContent = "";
-                if (e.target.value.trim().length != 0) {
-                    searchFetch(e.target.value).then(json => {
-                        if (json.artists != null || json.members != null) {
-                            if (document.getElementById("results").classList.contains("hidden") != false) {
-                                document.getElementById("results").classList.remove("hidden");
-                            }
-                            let artists = json.artists;
-                            let members = json.members;
-
-                            artists?.forEach(artist => {
-                                n = document.createElement("a");
-                                n.innerHTML = artist.name + " - artist/band";
-                                n.href = "http://localhost:8080/artist?id=" + artist.id;
-                                linkClasses.forEach(c => n.classList.add(c));
-                                document.getElementById("results").appendChild(n);
-                            });
-
-                            members?.forEach(member => {
-                                n = document.createElement("a");
-                                n.innerHTML = member.name + " - " + member.type + member.artist.name;
-                                n.href = "http://localhost:8080/artist?id=" + member.artist.id;
-                                linkClasses.forEach(c => n.classList.add(c));
-                                document.getElementById("results").appendChild(n);
-                            });
-
-                        } else {
-                            document.getElementById("results").classList.add("hidden");
-                        }
-                    });
-                } else {
-                    document.getElementById("results").classList.add("hidden");
-                }
-            });
-        
-            document.querySelector("body").addEventListener("click", e => {
-                if (!document.getElementById("results").classList.contains("hidden")) {
-                    document.getElementById("results").classList.add("hidden");
-                }
-            });
-
-            // Event listeners for filter inputs
-            document.getElementById('creation-year-from').addEventListener('input', fetchFilteredArtists);
-            document.getElementById('creation-year-to').addEventListener('input', fetchFilteredArtists);
-            document.getElementById('first-album-year-from').addEventListener('input', fetchFilteredArtists);
-            document.getElementById('first-album-year-to').addEventListener('input', fetchFilteredArtists);
-            document.getElementById('members-from').addEventListener('input', fetchFilteredArtists);
-            document.getElementById('members-to').addEventListener('input', fetchFilteredArtists);
-            document.getElementById('locations').addEventListener('input', fetchFilteredArtists);
-
-            // Initial fetch of artists without filters
-            fetchFilteredArtists();
-        };
-    </script>
 </body>
 
 </html>
-
