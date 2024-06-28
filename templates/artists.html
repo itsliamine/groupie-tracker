@@ -38,10 +38,14 @@
         </div>
     </div>
 
-    <div class="flex max-auto justify-center">
-        <div class="filters">
-            <div class="date">
-                <input type="range" min="1900" max="2024" name="creationyear" id="creationyear">
+    <div class="flex max-auto justify-center text-white">
+        <div class="filters bg-slate-800 p-2 m-4 my-10 rounded-md">
+            <div class="creation-year flex flex-col gap-1">
+                <input type="range" min="1900" max="2024" name="creation-year" id="creation-year">
+                <div class="flex gap-1 items-center">
+                    <p class="text-sm">Creation year :</p>
+                    <label class="text-sm text-white font-semibold" for="creation-year" id="creation-year-value"></label>
+                </div>
             </div>
         </div>
     </div>
