@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"groupie-tracker/datatypes"
 	"groupie-tracker/utils"
 	"html/template"
@@ -35,6 +36,7 @@ func main() {
 	http.HandleFunc("/searchbar", searchBarHandler)
 	http.HandleFunc("/artist", artistHandler)
 	http.HandleFunc("/artists", artistsHandler)
+	http.HandleFunc("/filters", filtersHandler)
 
 	log.Println(GREEN, "Server started at http://localhost:8080", NONE)
 	log.Fatal(http.ListenAndServe(":8080", nil))
@@ -57,7 +59,7 @@ func searchBarHandler(w http.ResponseWriter, r *http.Request) {
 
 	err := json.NewDecoder(r.Body).Decode(&s)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 
 	var response datatypes.SearchReponse
@@ -99,21 +101,37 @@ func artistHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func artistsHandler(w http.ResponseWriter, r *http.Request) {
-	t, err := template.ParseFiles("templates/artists.html")
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
 	data := datatypes.ArtistsPage{
 		Artists:   artistsJson,
 		Locations: utils.GetAllLocations(locationsJson),
 	}
 
-	err = t.Execute(w, data)
+	t, _ := template.ParseFiles("templates/artists.html", "templates/artist_block.html")
+	t.Execute(w, data)
+}
+
+func filtersHandler(w http.ResponseWriter, r *http.Request) {
+	request := datatypes.FiltersRequest{}
+
+	err := json.NewDecoder(r.Body).Decode(&request)
 	if err != nil {
+		fmt.Println(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
+
+	var a []datatypes.Artist
+
+	for _, artist := range artistsJson {
+		if request.FromCreationYear != 0 && artist.CreationDate > request.FromCreationYear {
+			a = append(a, artist)
+		}
+		if request.FromCreationYear != 0 && artist.CreationDate < request.ToCreationYear {
+			a = append(a, artist)
+		}
+	}
+
+	t, _ := template.ParseFiles("templates/artist_block.html")
+	t.ExecuteTemplate(w, "artist_block", a)
 }
 
 func badRequestHandler(w http.ResponseWriter) {

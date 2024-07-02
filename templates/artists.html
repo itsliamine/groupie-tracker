@@ -39,20 +39,39 @@
     </div>
 
     <div class="flex max-auto justify-center text-white">
-        <div class="filters bg-slate-800 p-2 m-4 my-10 rounded-md flex gap-10">
-            <div class="creation-year flex flex-col gap-1">
-                <div class="flex gap-1 items-center">
-                    <p class="text-sm">Creation year :</p>
-                    <label class="text-sm text-white font-semibold" for="creation-year" id="range-value"></label>
+        <div action="/artists" method="POST" class="filters bg-slate-800 p-2 m-4 my-10 rounded-md flex gap-10">
+            <div>
+                <div class="creation-year flex flex-col gap-1">
+                    <div class="flex gap-1 items-center">
+                        <p class="text-sm">From creation year :</p>
+                        <label class="text-sm text-white font-semibold" for="creation-year" id="range-value"></label>
+                    </div>
+                    <input type="range" min="1900" max="2024" name="fromCreationYear" value="0" id="from-creation-year">
                 </div>
-                <input type="range" min="1900" max="2024" name="creationyear" id="creation-year">
+                <div class="creation-year flex flex-col gap-1">
+                    <div class="flex gap-1 items-center">
+                        <p class="text-sm">To creation year :</p>
+                        <label class="text-sm text-white font-semibold" for="from-creation-year"
+                            id="range-value"></label>
+                    </div>
+                    <input type="range" min="1900" max="2024" name="toCreationYear" value="0" id="to-creation-year">
+                </div>
             </div>
-            <div class="first-album-year flex flex-col gap-1">
-                <div class="flex gap-1 items-center">
-                    <p class="text-sm">First Album year :</p>
-                    <label class="text-sm text-white font-semibold" for="first-album-year" id="range-value"></label>
+            <div>
+                <div class="first-album-year flex flex-col gap-1">
+                    <div class="flex gap-1 items-center">
+                        <p class="text-sm">From first Album year :</p>
+                        <label class="text-sm text-white font-semibold" for="first-album-year" id="range-value"></label>
+                    </div>
+                    <input type="range" min="1900" max="2024" name="fromFirstAlbumYear" id="first-album-year">
                 </div>
-                <input type="range" min="1900" max="2024" name="firstalbumyear" id="first-album-year">
+                <div class="first-album-year flex flex-col gap-1">
+                    <div class="flex gap-1 items-center">
+                        <p class="text-sm">To first Album year :</p>
+                        <label class="text-sm text-white font-semibold" for="first-album-year" id="range-value"></label>
+                    </div>
+                    <input type="range" min="1900" max="2024" name="toFirstAlbumYear" id="first-album-year">
+                </div>
             </div>
             <div class="members-number flex flex-col gap-1">
                 <div class="flex gap-1 items-center">
@@ -73,10 +92,10 @@
                 <div class="flex gap-1 items-center">
                     <p class="text-sm">Locations :</p>
                 </div>
-                <select name="locations" id="locations"
+                <select name="location" id="location"
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                     {{range .Locations}}
-                        <option value="{{.}}">{{.}}</option>
+                    <option value="{{.}}">{{.}}</option>
                     {{end}}
                 </select>
             </div>
@@ -85,15 +104,7 @@
 
     <div class="flex mx-auto justify-center">
         <div class="grid grid-cols-3 gap-10 text-white" id="artists-container">
-            {{range .Artists}}
-            <div class="flex flex-col gap-1.5 p-5 bg-slate-800 rounded-md">
-                <a href="/artist?id={{.Id}}">
-                    <img src="{{.Image}}" alt="{{.Name}}" class="mb-3 rounded-lg">
-                    <h2 class="font-semibold">{{.Name}}</h2>
-                    <p class="text-sm text-muted">Creation Date: {{.CreationDate}}</p>
-                </a>
-            </div>
-            {{end}}
+            {{template "artist_block" .Artists}}
         </div>
     </div>
 </body>
