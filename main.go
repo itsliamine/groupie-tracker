@@ -1,15 +1,10 @@
 package main
 
 import (
-	"encoding/json"
-	"fmt"
-	"groupie-tracker/datatypes"
+	"groupie-tracker/handlers"
 	"groupie-tracker/utils"
-	"html/template"
 	"log"
 	"net/http"
-	"strconv"
-	"strings"
 )
 
 const RED = "\033[31;1m"
@@ -17,154 +12,23 @@ const GREEN = "\033[32;1m"
 const YELLOW = "\033[33;1m"
 const NONE = "\033[0m"
 
-var artistsJson []datatypes.Artist
-var locationsJson []datatypes.Location
-var relationJson []datatypes.Relation
-
 func main() {
 	log.SetFlags(log.Ltime)
 	log.SetPrefix("groupie-tracker:")
 
-	utils.ReadJson("json/artists.json", &artistsJson)
-	utils.ReadJson("json/locations.json", &locationsJson)
-	utils.ReadJson("json/relation.json", &relationJson)
+	utils.ReadJson("json/artists.json", &utils.ArtistsJson)
+	utils.ReadJson("json/locations.json", &utils.LocationsJson)
+	utils.ReadJson("json/relation.json", &utils.RelationJson)
 
 	scripts := http.FileServer(http.Dir("./templates/scripts"))
 	http.Handle("/scripts/", http.StripPrefix("/scripts/", scripts))
 
-	http.HandleFunc("/", homeHandler)
-	http.HandleFunc("/searchbar", searchBarHandler)
-	http.HandleFunc("/artist", artistHandler)
-	http.HandleFunc("/artists", artistsHandler)
-	http.HandleFunc("/filters", filtersHandler)
-	http.HandleFunc("/test", testHandler)
+	http.HandleFunc("/", handlers.HomeHandler)
+	http.HandleFunc("/searchbar", handlers.SearchBarHandler)
+	http.HandleFunc("/artist", handlers.ArtistHandler)
+	http.HandleFunc("/artists", handlers.ArtistsHandler)
+	http.HandleFunc("/filters", handlers.FiltersHandler)
 
 	log.Println(GREEN, "Server started at http://localhost:8080", NONE)
 	log.Fatal(http.ListenAndServe(":8080", nil))
-}
-
-func homeHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method != "GET" {
-		badRequestHandler(w)
-	}
-	t, _ := template.ParseFiles("templates/index.html")
-	t.Execute(w, nil)
-}
-
-func searchBarHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method != "POST" {
-		badRequestHandler(w)
-	}
-
-	var s datatypes.SearchRequest
-
-	err := json.NewDecoder(r.Body).Decode(&s)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
-
-	var response datatypes.SearchReponse
-
-	for _, v := range artistsJson {
-		if strings.Contains(strings.ToLower(v.Name), strings.ToLower(s.Search)) {
-			response.Artists = append(response.Artists, v)
-		}
-		for _, member := range v.Members {
-			if strings.Contains(strings.ToLower(member), strings.ToLower(s.Search)) {
-				t := "member of "
-				if len(v.Members) == 1 {
-					t = "real name of "
-				}
-				d := datatypes.MemberResponse{
-					Name:   member,
-					Artist: v,
-					Type:   t,
-				}
-				response.Members = append(response.Members, d)
-			}
-		}
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(response)
-}
-
-func artistHandler(w http.ResponseWriter, r *http.Request) {
-	requestID := r.URL.Query().Get("id")
-
-	var a datatypes.ArtistResponse
-	artistID, _ := strconv.Atoi(requestID)
-	a.Artist = utils.GetArtist(artistID, artistsJson)
-	a.Relations = utils.GetRelations(artistID, relationJson)
-
-	t, _ := template.ParseFiles("templates/artist.html")
-	t.Execute(w, a)
-}
-
-func artistsHandler(w http.ResponseWriter, r *http.Request) {
-	data := datatypes.ArtistsPage{
-		Artists:   artistsJson,
-		Locations: utils.GetAllLocations(locationsJson),
-	}
-
-	t, _ := template.ParseFiles("templates/artists.html", "templates/artist_block.html", "templates/slider.html")
-	t.Execute(w, data)
-}
-
-func filtersHandler(w http.ResponseWriter, r *http.Request) {
-	request := datatypes.FiltersRequest{}
-
-	err := json.NewDecoder(r.Body).Decode(&request)
-	if err != nil {
-		fmt.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
-
-	fmt.Println(request)
-
-	var filtered []datatypes.Artist
-
-	for _, artist := range artistsJson {
-		match := true
-
-		if artist.CreationDate < request.FromCreationYear {
-			match = false
-		}
-
-		if artist.CreationDate > request.ToCreationYear {
-			match = false
-		}
-
-		firstAlbum, _ := strconv.Atoi(strings.Split(artist.FirstAlbum, "-")[2])
-
-		if firstAlbum < request.FromFirstAlbumYear {
-			match = false
-		}
-
-		if firstAlbum > request.ToFirstAlbumYear {
-			match = false
-		}
-
-		if request.Members != 0 && len(artist.Members) != request.Members {
-			match = false
-		}
-
-		if match {
-			filtered = append(filtered, artist)
-		}
-	}
-
-	t, _ := template.ParseFiles("templates/artist_block.html")
-	t.ExecuteTemplate(w, "artist_block", filtered)
-}
-
-func badRequestHandler(w http.ResponseWriter) {
-	w.WriteHeader(http.StatusBadRequest)
-	t, _ := template.ParseFiles("templates/400.html")
-	t.Execute(w, nil)
-}
-
-func testHandler(w http.ResponseWriter, r *http.Request) {
-	t, _ := template.ParseFiles("templates/test.html")
-	t.Execute(w, nil)
 }
