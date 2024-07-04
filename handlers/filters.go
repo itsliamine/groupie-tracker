@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"groupie-tracker/datatypes"
 	"groupie-tracker/utils"
@@ -16,8 +17,7 @@ func FiltersHandler(w http.ResponseWriter, r *http.Request) {
 
 	err := json.NewDecoder(r.Body).Decode(&request)
 	if err != nil {
-		fmt.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		ErrorHandler(w, errors.New("500 | Internal server error: Could not decode json"))
 	}
 
 	fmt.Println(request)
@@ -54,6 +54,9 @@ func FiltersHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	t, _ := template.ParseFiles("templates/artist_block.html")
+	t, err := template.ParseFiles("templates/artist_block.html")
+	if err != nil {
+		ErrorHandler(w, errors.New("500 | Internal server error: Could not parse template"))
+	}
 	t.ExecuteTemplate(w, "artist_block", filtered)
 }

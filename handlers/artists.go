@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"errors"
 	"groupie-tracker/datatypes"
 	"groupie-tracker/utils"
 	"html/template"
@@ -13,6 +14,9 @@ func ArtistsHandler(w http.ResponseWriter, r *http.Request) {
 		Locations: utils.GetAllLocations(utils.LocationsJson),
 	}
 
-	t, _ := template.ParseFiles("templates/artists.html", "templates/artist_block.html", "templates/slider.html")
+	t, err := template.ParseFiles("templates/artists.html", "templates/artist_block.html")
+	if err != nil {
+		ErrorHandler(w, errors.New("500 | Internal server error: Could not parse template"))
+	}
 	t.Execute(w, data)
 }

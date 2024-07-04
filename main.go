@@ -16,9 +16,20 @@ func main() {
 	log.SetFlags(log.Ltime)
 	log.SetPrefix("groupie-tracker:")
 
-	utils.ReadJson("json/artists.json", &utils.ArtistsJson)
-	utils.ReadJson("json/locations.json", &utils.LocationsJson)
-	utils.ReadJson("json/relation.json", &utils.RelationJson)
+	err := utils.ReadJson("json/artists.json", &utils.ArtistsJson)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = utils.ReadJson("json/locations.json", &utils.LocationsJson)
+	if err != nil {
+		log.Fatal(RED, err)
+	}
+
+	err = utils.ReadJson("json/relation.json", &utils.RelationJson)
+	if err != nil {
+		log.Fatal(RED, err)
+	}
 
 	scripts := http.FileServer(http.Dir("./templates/scripts"))
 	http.Handle("/scripts/", http.StripPrefix("/scripts/", scripts))

@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"errors"
 	"groupie-tracker/datatypes"
 	"groupie-tracker/utils"
 	"net/http"
@@ -10,14 +11,14 @@ import (
 
 func SearchBarHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
-		badRequestHandler(w)
+		ErrorHandler(w, errors.New("400 | Wrong method"))
 	}
 
 	var s datatypes.SearchRequest
 
 	err := json.NewDecoder(r.Body).Decode(&s)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		ErrorHandler(w, errors.New("500 | Internal server error: Could not decode json"))
 	}
 
 	var response datatypes.SearchReponse
