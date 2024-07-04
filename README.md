@@ -1,30 +1,45 @@
 # Groupie Tracker
 
-This Go program consists on receiving a given API and manipulate the data contained in it, in order to create a site, displaying the information.
+Groupie server is a fully fonctionning web app working on a Golang server. It uses HTML template to render client front-end. The information from the groupie API is taken and displayed.
 
-## Arborescence
+## Project Architecture
 
-- `main.go`
-- `templates/`
-    - `500.html`
-    - `400.html`
-    - `404.html`
-    - `artist.html`
-    - `index.html`
+- `datatypes/`
+    - `structs.go`
+- `handlers/`
+    - `artist.go`
+    - `artists.go`
+    - `error.go`
+    - `filters.go`
+    - `home.go`
+    - `searchBar.go`
 - `json/`
     - `artists.json`	
     - `dates.json`	
     - `locations.json`	
     - `relation.json`
-- `datatypes/`
-    - `structs.go`
+- `templates/`
+    - `scripts/`
+        - `artist_block.html`
+        - `artist.html`
+        - `artists.html`
+        - `error.html`
+        - `index.html`
 - `utils/`
     - `artists.go`
+    - `locations.go`
+    - `readjson.go`
+    - `variables.go`
+- `go.mod`
+- `main.go`
+- `README.md`
+
 ## Usage
 
 To clone the repository:
+
 ```bash
-git clone https://zone01normandie.org/git/faoudia/groupie-tracker.git
+git clone https://github.com/itsliamine/groupie-tracker.git
 ```
 
 To run the Program:
@@ -33,15 +48,3 @@ cd groupie-tracker
 
 go run . 
 ```
-
-## Files
-
-### [main.go](main.go) :
-
-### [templates/](templates/) : 
-
-### [json/](json/) :
-
-### [dataypes/](datatypes/) :
-
-### [utils/](utils/) :
