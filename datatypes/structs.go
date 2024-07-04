@@ -56,8 +56,8 @@ type ArtistsPage struct {
 type FiltersRequest struct {
 	FromCreationYear   int    `json:"fromCreationYear"`
 	ToCreationYear     int    `json:"toCreationYear"`
-	FromFirstAlbumYear string `json:"fromFirstAlbumYear"`
-	ToFirstAlbumYear   string `json:"toFirstAlbumYear"`
-	MembersNumber      string `json:"members"`
+	FromFirstAlbumYear int    `json:"fromAlbumYear"`
+	ToFirstAlbumYear   int    `json:"toAlbumYear"`
+	Members            int    `json:"members"`
 	Location           string `json:"location"`
 }

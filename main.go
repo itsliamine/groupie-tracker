@@ -37,6 +37,7 @@ func main() {
 	http.HandleFunc("/artist", artistHandler)
 	http.HandleFunc("/artists", artistsHandler)
 	http.HandleFunc("/filters", filtersHandler)
+	http.HandleFunc("/test", testHandler)
 
 	log.Println(GREEN, "Server started at http://localhost:8080", NONE)
 	log.Fatal(http.ListenAndServe(":8080", nil))
@@ -106,7 +107,7 @@ func artistsHandler(w http.ResponseWriter, r *http.Request) {
 		Locations: utils.GetAllLocations(locationsJson),
 	}
 
-	t, _ := template.ParseFiles("templates/artists.html", "templates/artist_block.html")
+	t, _ := template.ParseFiles("templates/artists.html", "templates/artist_block.html", "templates/slider.html")
 	t.Execute(w, data)
 }
 
@@ -119,23 +120,51 @@ func filtersHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 
-	var a []datatypes.Artist
+	fmt.Println(request)
+
+	var filtered []datatypes.Artist
 
 	for _, artist := range artistsJson {
-		if request.FromCreationYear != 0 && artist.CreationDate > request.FromCreationYear {
-			a = append(a, artist)
+		match := true
+
+		if artist.CreationDate < request.FromCreationYear {
+			match = false
 		}
-		if request.FromCreationYear != 0 && artist.CreationDate < request.ToCreationYear {
-			a = append(a, artist)
+
+		if artist.CreationDate > request.ToCreationYear {
+			match = false
+		}
+
+		firstAlbum, _ := strconv.Atoi(strings.Split(artist.FirstAlbum, "-")[2])
+
+		if firstAlbum < request.FromFirstAlbumYear {
+			match = false
+		}
+
+		if firstAlbum > request.ToFirstAlbumYear {
+			match = false
+		}
+
+		if request.Members != 0 && len(artist.Members) != request.Members {
+			match = false
+		}
+
+		if match {
+			filtered = append(filtered, artist)
 		}
 	}
 
 	t, _ := template.ParseFiles("templates/artist_block.html")
-	t.ExecuteTemplate(w, "artist_block", a)
+	t.ExecuteTemplate(w, "artist_block", filtered)
 }
 
 func badRequestHandler(w http.ResponseWriter) {
 	w.WriteHeader(http.StatusBadRequest)
 	t, _ := template.ParseFiles("templates/400.html")
+	t.Execute(w, nil)
+}
+
+func testHandler(w http.ResponseWriter, r *http.Request) {
+	t, _ := template.ParseFiles("templates/test.html")
 	t.Execute(w, nil)
 }

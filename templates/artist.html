@@ -6,7 +6,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>{{.Artist.Name}} | Groupie Tracker</title>
 	<script src="https://cdn.tailwindcss.com"></script>
-	<script src="./scripts/artist.js"></script>
+	<script src="./scripts/artist.js" defer></script>
 	<script src="./scripts/search.js"></script>
 	<link rel="shortcut icon"
 		href="https://static.vecteezy.com/system/resources/previews/002/986/080/non_2x/letter-g-logo-design-template-free-vector.jpg"
@@ -96,7 +96,7 @@
 								d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708" />
 						</svg>
 					</div>
-					<div class="content bg-slate-900 rounded-b-lg transition-all duration-500">
+					<div class="content bg-slate-900 rounded-b-lg transition-all">
 						{{range $value}}
 						<p class="text-sm my-1">{{.}}</p>
 						{{end}}
