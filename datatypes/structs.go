@@ -39,8 +39,9 @@ type MemberResponse struct {
 }
 
 type ArtistResponse struct {
-	Artist    Artist   `json:"artist"`
-	Relations Relation `json:"relations"`
+	Artist    Artist              `json:"artist"`
+	Relations Relation            `json:"relations"`
+	Locations map[string][]string `json:"locations"`
 }
 
 type Relation struct {
@@ -60,4 +61,9 @@ type FiltersRequest struct {
 	ToFirstAlbumYear   int    `json:"toAlbumYear"`
 	Members            int    `json:"members"`
 	Location           string `json:"location"`
+}
+
+type ErrorPage struct {
+	ErrStatus string
+	ErrMsg    string
 }

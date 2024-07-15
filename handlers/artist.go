@@ -16,6 +16,7 @@ func ArtistHandler(w http.ResponseWriter, r *http.Request) {
 	artistID, _ := strconv.Atoi(requestID)
 	a.Artist = utils.GetArtist(artistID, utils.ArtistsJson)
 	a.Relations = utils.GetRelations(artistID, utils.RelationJson)
+	a.Locations = utils.GetArtistLocations(artistID, utils.LocationsJson, utils.RelationJson)
 
 	t, err := template.ParseFiles("templates/artist.html")
 	if err != nil {
