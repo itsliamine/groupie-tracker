@@ -8,6 +8,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="./scripts/artist.js" defer></script>
     <script src="./scripts/search.js"></script>
+    <script src="./scripts/geolocalization.js" type="module"></script>
     <link rel="shortcut icon"
         href="https://static.vecteezy.com/system/resources/previews/002/986/080/non_2x/letter-g-logo-design-template-free-vector.jpg"
         type="image/x-icon">
@@ -98,7 +99,7 @@
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                             class="bi bi-chevron-down icon-down" viewBox="0 0 16 16">
                             <path fill-rule="evenodd"
-                                d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1-.708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708" />
+                                d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1-.708.708l-6 6a.5.5 0 0 1 0-.708" />
                         </svg>
                     </div>
                     <div class="content bg-slate-900 rounded-b-lg transition-all">
@@ -117,83 +118,20 @@
         </div>
     </div>
     <div>
-        <script>
-            let map;
-            let markers = [];
+        <script type="module">
+            import { initMap } from './scripts/geolocalization.js';
+        
             let locationData = {{.Locations}};
-        
-            function initMap() {
-                map = new google.maps.Map(document.getElementById('map'), {
-                    center: { lat: 0, lng: 0 },
-                    zoom: 2,
-                    mapTypeId: google.maps.MapTypeId.HYBRID, // Set default map type to hybrid view
-                    mapTypeControl: true,
-                    mapTypeControlOptions: {
-                        style: google.maps.MapTypeControlStyle.DROPDOWN_MENU,
-                        mapTypeIds: [
-                            google.maps.MapTypeId.ROADMAP,
-                            google.maps.MapTypeId.SATELLITE,
-                            google.maps.MapTypeId.HYBRID,
-                            google.maps.MapTypeId.TERRAIN
-                        ]
-                    }
-                });
-        
-                loadLocations();
+            
+            function loadGoogleMapsScript() {
+                const script = document.createElement('script');
+                script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyCY_DORiaW68dDA7JaLmhSzSh0-2QYZQks';
+                script.onload = () => initMap(locationData);
+                document.body.appendChild(script);
             }
         
-            function loadLocations() {
-                if (Object.keys(locationData).length > 0) {
-                    const bounds = new google.maps.LatLngBounds();
-                    const geocoder = new google.maps.Geocoder();
-        
-                    for (const [location, dates] of Object.entries(locationData)) {
-                        geocoder.geocode({ address: location }, (results, status) => {
-                            if (status === 'OK') {
-                                const marker = new google.maps.Marker({
-                                    map: map,
-                                    position: results[0].geometry.location,
-                                    title: location
-                                });
-        
-                                markers.push(marker);
-                                bounds.extend(marker.getPosition());
-        
-                                const infoWindowContent = `
-                                    <div style="background-color: #1e293b; color: white; font-family: Arial, sans-serif; padding: 10px; border-radius: 8px;">
-                                        <h3 style="font-size: 1.2em; font-weight: bold;">${location}</h3>
-                                        <p>Dates:</p>
-                                        <ul>
-                                            ${dates.map(date => `<li>${date}</li>`).join('')}
-                                        </ul>
-                                    </div>
-                                `;
-        
-                                const infoWindow = new google.maps.InfoWindow({
-                                    content: infoWindowContent
-                                });
-        
-                                marker.addListener('click', () => {
-                                    infoWindow.open(map, marker);
-                                });
-        
-                                // If this is the last location, fit the map to show all markers
-                                if (markers.length === Object.keys(locationData).length) {
-                                    map.fitBounds(bounds);
-                                }
-                            } else {
-                                console.error('Geocode was not successful for the following reason: ' + status);
-                            }
-                        });
-                    }
-                } else {
-                    console.error('No location data found for this artist');
-                }
-            }
+            window.onload = loadGoogleMapsScript;
         </script>
-        <script async defer
-            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCY_DORiaW68dDA7JaLmhSzSh0-2QYZQks&callback=initMap">
-        </script>                       
     </div>
 </body>
 
