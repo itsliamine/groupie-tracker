@@ -1,5 +1,3 @@
-// geolocalization.js
-
 let map;
 let markers = [];
 
