@@ -41,6 +41,17 @@ func SearchBarHandler(w http.ResponseWriter, r *http.Request) {
 				response.Members = append(response.Members, d)
 			}
 		}
+
+		locs := utils.GetLocations(v.Id)
+		for _, location := range locs {
+			if strings.Contains(strings.ToLower(location), strings.ToLower(s.Search)) {
+				d := datatypes.MemberResponse{
+					Name:   member,
+					Artist: v,
+					Type:   "",
+				}
+			}
+		}
 	}
 
 	w.Header().Set("Content-Type", "application/json")

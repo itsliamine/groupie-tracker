@@ -109,23 +109,20 @@
 					<label for="slider-4" class="text-sm">2024</label>
 				</div>
 			</div>
-
 		</div>
 
-		<div class="members-number flex flex-col gap-1 bg-slate-800 p-4">
-			<div class="flex gap-1 items-center">
-				<p class="text-sm">Members number :</p>
+		<div class="flex flex-col justify-center w-56 bg-slate-800 p-4">
+			<h1 class="font-semibold text-sm mb-4">Members</h1>
+			<div class="relative w-full max-w-xl grid">
+				<input type="range" min="1" max="8" name="membersMin" value="1" id="slider-5"
+					class="absolute w-full">
+				<input type="range" min="1" max="8" name="membersMax" value="8" id="slider-6"
+					class="absolute w-full">
+				<div class="flex justify-between mt-4">
+					<label for="slider-5" class="text-sm">1</label>
+					<label for="slider-6" class="text-sm">8</label>
+				</div>
 			</div>
-			<select name="members" id="members"
-				class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-				<option value="1">1</option>
-				<option value="2">2</option>
-				<option value="3">3</option>
-				<option value="4">4</option>
-				<option value="5">5</option>
-				<option value="6">6</option>
-				<option value="7">7</option>
-			</select>
 		</div>
 		<div class="locations flex flex-col gap-1 bg-slate-800 p-4">
 			<div class="flex gap-1 items-center">

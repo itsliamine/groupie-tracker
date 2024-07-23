@@ -3,7 +3,8 @@ const data = {
 	toCreationYear: 0,
 	fromAlbumYear: 0,
 	toAlbumYear: 0,
-	members: 0,
+	membersMin: 1,
+	membersMax: 8,
 	location: ""
 }
 
@@ -13,12 +14,10 @@ data.fromAlbumYear = 1950
 data.toAlbumYear = 2024
 
 const handleFilter = async () => {
-	document.getElementById("artists-container").innerHTML = "";
 	reqOptions = {
 		method: "POST",
 		body: JSON.stringify(data)
 	};
-	console.log(reqOptions.body)
 	const req = await fetch("/filters", reqOptions);
 	const text = await req.text();
 	let container = document.getElementById("artists-container").innerHTML
@@ -49,6 +48,20 @@ document.querySelectorAll("input[type=range]").forEach(range => {
 			}
 		}
 		if (e.target.id == "slider-4") {
+			let s = e.target.closest("div").querySelectorAll("input[type=range]")[0];
+			if (parseInt(e.target.value) < parseInt(s.value)) {
+				e.target.value = s.value;
+			}
+		}
+
+		if (e.target.id == "slider-5") {
+			let s = e.target.closest("div").querySelectorAll("input[type=range]")[0];
+			if (parseInt(e.target.value) > parseInt(s.value)) {
+				e.target.value = s.value;
+			}
+		}
+
+		if (e.target.id == "slider-6") {
 			let s = e.target.closest("div").querySelectorAll("input[type=range]")[0];
 			if (parseInt(e.target.value) < parseInt(s.value)) {
 				e.target.value = s.value;

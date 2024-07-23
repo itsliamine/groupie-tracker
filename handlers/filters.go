@@ -3,7 +3,6 @@ package handlers
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"groupie-tracker/datatypes"
 	"groupie-tracker/utils"
 	"html/template"
@@ -19,8 +18,6 @@ func FiltersHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		ErrorHandler(w, errors.New("500 | Internal server error: Could not decode json"))
 	}
-
-	fmt.Println(request)
 
 	var filtered []datatypes.Artist
 
@@ -45,7 +42,11 @@ func FiltersHandler(w http.ResponseWriter, r *http.Request) {
 			match = false
 		}
 
-		if request.Members != 0 && len(artist.Members) != request.Members {
+		if request.MembersMin == request.MembersMax && len(artist.Members) != request.MembersMin {
+			match = false
+		}
+
+		if len(artist.Members) < request.MembersMin || len(artist.Members) > request.MembersMax {
 			match = false
 		}
 

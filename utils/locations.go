@@ -1,6 +1,8 @@
 package utils
 
-import "groupie-tracker/datatypes"
+import (
+	"groupie-tracker/datatypes"
+)
 
 func GetAllLocations(json []datatypes.Location) []string {
 	locs := []string{}
@@ -23,4 +25,14 @@ func GetArtistLocations(id int, locations []datatypes.Location, relations []data
 	}
 
 	return locationDates
+}
+
+func GetLocations(id int) []string {
+	response := []string{}
+	for _, locations := range LocationsJson {
+		if locations.Id == id {
+			response = locations.Locations
+		}
+	}
+	return response
 }

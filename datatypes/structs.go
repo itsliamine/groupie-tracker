@@ -59,7 +59,8 @@ type FiltersRequest struct {
 	ToCreationYear     int    `json:"toCreationYear"`
 	FromFirstAlbumYear int    `json:"fromAlbumYear"`
 	ToFirstAlbumYear   int    `json:"toAlbumYear"`
-	Members            int    `json:"members"`
+	MembersMin         int    `json:"membersMin"`
+	MembersMax         int    `json:"membersMax"`
 	Location           string `json:"location"`
 }
 
