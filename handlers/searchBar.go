@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"groupie-tracker/datatypes"
 	"groupie-tracker/utils"
 	"net/http"
@@ -24,59 +25,61 @@ func SearchBarHandler(w http.ResponseWriter, r *http.Request) {
 
 	var response datatypes.SearchReponse
 
-	for _, v := range utils.ArtistsJson {
+	for _, artist := range utils.ArtistsJson {
 		// Artist name search
-		if strings.Contains(strings.ToLower(v.Name), strings.ToLower(s.Search)) {
-			response.Artists = append(response.Artists, v)
+		if utils.Match(s.Search, artist.Name) {
+			response.Artists = append(response.Artists, artist)
 		}
 
 		// Member search
-		for _, member := range v.Members {
-			if strings.Contains(strings.ToLower(member), strings.ToLower(s.Search)) {
+		for _, member := range artist.Members {
+			if utils.Match(s.Search, member) {
 				t := "member of "
-				if len(v.Members) == 1 {
+				if len(artist.Members) == 1 {
 					t = "real name of "
 				}
 				d := datatypes.MemberResponse{
 					Name:   member,
-					Artist: v,
+					Artist: artist,
 					Type:   t,
 				}
 				response.Members = append(response.Members, d)
 			}
 		}
 
-		// Location search
-		locations := utils.GetLocations(v.Id)
+		locations := utils.GetLocations(artist.Id)
 		for _, location := range locations {
-			if strings.Contains(strings.ToLower(location), strings.ToLower(s.Search)) {
+			city := strings.Split(location, "-")[0]
+			country := strings.Split(location, "-")[1]
+			if utils.Match(city, s.Search) || utils.Match(country, s.Search) {
 				response.Locations = append(response.Locations, datatypes.LocationResponse{
 					Name:     location,
-					Artist:   v.Name,
-					ArtistId: v.Id,
+					Artist:   artist.Name,
+					ArtistId: artist.Id,
 				})
 			}
 		}
 
 		// First album date search
-		if strings.Contains(v.FirstAlbum, s.Search) {
+		if strings.Contains(artist.FirstAlbum, s.Search) {
 			response.FirstAlbumDates = append(response.FirstAlbumDates, datatypes.DateResponse{
-				Date:     v.FirstAlbum,
-				Artist:   v.Name,
-				ArtistId: v.Id,
+				Date:     artist.FirstAlbum,
+				Artist:   artist.Name,
+				ArtistId: artist.Id,
 			})
 		}
 
 		// Creation date search
-		if strconv.Itoa(v.CreationDate) == s.Search {
+		if strconv.Itoa(artist.CreationDate) == s.Search {
 			response.CreationDates = append(response.CreationDates, datatypes.DateResponse{
-				Date:     strconv.Itoa(v.CreationDate),
-				Artist:   v.Name,
-				ArtistId: v.Id,
+				Date:     strconv.Itoa(artist.CreationDate),
+				Artist:   artist.Name,
+				ArtistId: artist.Id,
 			})
 		}
 	}
 
 	w.Header().Set("Content-Type", "application/json")
+	fmt.Println(response)
 	json.NewEncoder(w).Encode(response)
 }

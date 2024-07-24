@@ -31,55 +31,52 @@ export function initializeSearch() {
         let debounceTimer;
 
         searchInput.addEventListener("input", async (e) => {
-            clearTimeout(debounceTimer);
-            debounceTimer = setTimeout(async () => {
-                resultsContainer.textContent = "";
-                if (e.target.value.trim().length !== 0) {
-                    const json = await searchFetch(e.target.value);
-                    if (json.artists || json.members || json.locations || json.firstAlbumDates || json.creationDates) {
-                        resultsContainer.classList.remove("hidden");
-                        
-                        // Display artist results
-                        json.artists?.forEach(artist => {
-                            const content = `${artist.name} - artist/band`;
-                            const href = `http://localhost:8080/artist?id=${artist.id}`;
-                            resultsContainer.appendChild(searchLink(content, href));
-                        });
-                        
-                        // Display member results
-                        json.members?.forEach(member => {
-                            const content = `${member.name} - ${member.type}${member.artist.name}`;
-                            const href = `http://localhost:8080/artist?id=${member.artist.id}`;
-                            resultsContainer.appendChild(searchLink(content, href));
-                        });
-                        
-                        // Display location results
-                        json.locations?.forEach(location => {
-                            const content = `${location.name} - concert location for ${location.artist}`;
-                            const href = `http://localhost:8080/artist?id=${location.artistId}`;
-                            resultsContainer.appendChild(searchLink(content, href));
-                        });
-                        
-                        // Display first album date results
-                        json.firstAlbumDates?.forEach(album => {
-                            const content = `${album.date} - first album date of ${album.artist}`;
-                            const href = `http://localhost:8080/artist?id=${album.artistId}`;
-                            resultsContainer.appendChild(searchLink(content, href));
-                        });
-                        
-                        // Display creation date results
-                        json.creationDates?.forEach(creation => {
-                            const content = `${creation.date} - creation date of ${creation.artist}`;
-                            const href = `http://localhost:8080/artist?id=${creation.artistId}`;
-                            resultsContainer.appendChild(searchLink(content, href));
-                        });
-                    } else {
-                        resultsContainer.classList.add("hidden");
-                    }
+            resultsContainer.textContent = "";
+            if (e.target.value.trim().length !== 0) {
+                const json = await searchFetch(e.target.value);
+                if (json.artists || json.members || json.locations || json.firstAlbumDates || json.creationDates) {
+                    resultsContainer.classList.remove("hidden");
+
+                    // Display artist results
+                    json.artists?.forEach(artist => {
+                        const content = `${artist.name} - artist/band`;
+                        const href = `http://localhost:8080/artist?id=${artist.id}`;
+                        resultsContainer.appendChild(searchLink(content, href));
+                    });
+
+                    // Display member results
+                    json.members?.forEach(member => {
+                        const content = `${member.name} - ${member.type}${member.artist.name}`;
+                        const href = `http://localhost:8080/artist?id=${member.artist.id}`;
+                        resultsContainer.appendChild(searchLink(content, href));
+                    });
+
+                    // Display location results
+                    json.locations?.forEach(location => {
+                        const content = `${location.artist} - concert location in ${location.name}`;
+                        const href = `http://localhost:8080/artist?id=${location.artistId}`;
+                        resultsContainer.appendChild(searchLink(content, href));
+                    });
+
+                    // Display first album date results
+                    json.firstAlbumDates?.forEach(album => {
+                        const content = `${album.date} - first album date of ${album.artist}`;
+                        const href = `http://localhost:8080/artist?id=${album.artistId}`;
+                        resultsContainer.appendChild(searchLink(content, href));
+                    });
+
+                    // Display creation date results
+                    json.creationDates?.forEach(creation => {
+                        const content = `${creation.date} - creation date of ${creation.artist}`;
+                        const href = `http://localhost:8080/artist?id=${creation.artistId}`;
+                        resultsContainer.appendChild(searchLink(content, href));
+                    });
                 } else {
                     resultsContainer.classList.add("hidden");
                 }
-            }, 300); // Debounce for 300ms
+            } else {
+                resultsContainer.classList.add("hidden");
+            }
         });
 
         // Close results when clicking outside
