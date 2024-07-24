@@ -84,10 +84,12 @@ document.querySelectorAll("select").forEach(select => {
 		if (e.target.name == "members") {
 			data[e.target.name] = parseInt(e.target.value)
 			handleFilter()
+		} else if (e.target.name == "location") {
+			data[e.target.name] = e.target.value
+			handleFilter()
 		} else {
 			data[e.target.name] = e.target.value
 			handleFilter()
 		}
-
 	})
 })

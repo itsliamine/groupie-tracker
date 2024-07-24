@@ -50,6 +50,21 @@ func FiltersHandler(w http.ResponseWriter, r *http.Request) {
 			match = false
 		}
 
+		// Check location
+		if request.Location != "" {
+			locations := utils.GetLocations(artist.Id)
+			locationMatch := false
+			for _, location := range locations {
+				if strings.Contains(strings.ToLower(location), strings.ToLower(request.Location)) {
+					locationMatch = true
+					break
+				}
+			}
+			if !locationMatch {
+				match = false
+			}
+		}
+
 		if match {
 			filtered = append(filtered, artist)
 		}

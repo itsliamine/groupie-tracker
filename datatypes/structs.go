@@ -28,8 +28,23 @@ type SearchRequest struct {
 }
 
 type SearchReponse struct {
-	Artists []Artist         `json:"artists"`
-	Members []MemberResponse `json:"members"`
+	Artists         []Artist           `json:"artists"`
+	Members         []MemberResponse   `json:"members"`
+	Locations       []LocationResponse `json:"locations"`
+	FirstAlbumDates []DateResponse     `json:"firstAlbumDates"`
+	CreationDates   []DateResponse     `json:"creationDates"`
+}
+
+type LocationResponse struct {
+	Name     string `json:"name"`
+	Artist   string `json:"artist"`
+	ArtistId int    `json:"artistId"`
+}
+
+type DateResponse struct {
+	Date     string `json:"date"`
+	Artist   string `json:"artist"`
+	ArtistId int    `json:"artistId"`
 }
 
 type MemberResponse struct {
