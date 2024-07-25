@@ -1,11 +1,11 @@
 const data = {
-	fromCreationYear: 0,
-	toCreationYear: 0,
-	fromAlbumYear: 0,
-	toAlbumYear: 0,
-	membersMin: 1,
-	membersMax: 8,
-	location: ""
+    fromCreationYear: 1950,
+    toCreationYear: 2024,
+    fromAlbumYear: 1950,
+    toAlbumYear: 2024,
+    membersMin: 1,
+    membersMax: 8,
+    location: ""
 }
 
 data.fromCreationYear = 1950
